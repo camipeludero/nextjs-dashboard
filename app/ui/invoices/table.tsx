@@ -7,9 +7,11 @@ import { fetchFilteredInvoices } from '@/app/lib/data';
 export default async function InvoicesTable({
   query,
   currentPage,
+  showCustomerInfo = true,
 }: {
   query: string;
   currentPage: number;
+  showCustomerInfo?: boolean;
 }) {
   const invoices = await fetchFilteredInvoices(query, currentPage);
 
@@ -23,7 +25,13 @@ export default async function InvoicesTable({
                 key={invoice.id}
                 className="mb-2 w-full rounded-md bg-white p-4"
               >
-                <div className="flex items-center justify-between border-b pb-4">
+                <div
+                  className={
+                    showCustomerInfo
+                      ? 'flex items-center justify-between border-b pb-4'
+                      : 'hidden'
+                  }
+                >
                   <div>
                     <div className="mb-2 flex items-center">
                       <Image
@@ -57,12 +65,15 @@ export default async function InvoicesTable({
           <table className="hidden min-w-full text-gray-900 md:table">
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
-                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+               {showCustomerInfo && (<>
+               <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
                   Customer
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Email
                 </th>
+               </>
+                )}
                 <th scope="col" className="px-3 py-5 font-medium">
                   Amount
                 </th>
@@ -83,6 +94,7 @@ export default async function InvoicesTable({
                   key={invoice.id}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
+                {showCustomerInfo && (<>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
                       <Image
@@ -91,13 +103,15 @@ export default async function InvoicesTable({
                         width={28}
                         height={28}
                         alt={`Invoice ${invoice.id} image`}
-                      />
+                        />
                       <p>{invoice.name}</p>
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {invoice.email}
                   </td>
+                        </>
+                  )}
                   <td className="whitespace-nowrap px-3 py-3">
                     {formatCurrency(invoice.amount)}
                   </td>
